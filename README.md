@@ -43,6 +43,7 @@ lr = 1e-4
 pre_train_path = "models/Baichuan-13B-Base"
 # 训练数据json地址
 dataset_paper = "data.json"
+train_option = "pretrain"
 # lora
 use_lora = True
 pre_lora_train_path = ""  # 如果要继续上一个lora训练，这里填上上一个lora训练的地址
@@ -56,6 +57,7 @@ lora_alpha = 32
 pre_train_path = "models/Baichuan-13B-Base"
 # 训练数据json地址
 dataset_paper = "w8ay/secgpt"
+train_option = "pretrain"
 ```
 执行
 `python train.py`
@@ -66,6 +68,7 @@ dataset_paper = "w8ay/secgpt"
 pre_train_path = "models/Baichuan-13B-Base"
 # 训练数据json地址
 dataset_paper = "sft.jsonl"
+train_option = "sft"
 pre_lora_train_path = "output/secgpt-epoch-1"  # 预训练lora保存目录
 ```
 执行

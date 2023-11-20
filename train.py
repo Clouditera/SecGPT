@@ -4,7 +4,7 @@ import torch
 from tqdm import tqdm
 from transformers import AutoTokenizer, AdamW, AutoModelForCausalLM
 
-from dataset import pretrain
+from dataset import pretrain, sft
 from peft import PeftModel, LoraConfig, TaskType, get_peft_model
 import transformers
 import matplotlib.pyplot as plt
@@ -26,7 +26,9 @@ lr = 1e-4
 # 预训练地址
 pre_train_path = "models/Baichuan-13B-Base"
 # 训练数据json地址
-dataset_paper = "data.json"
+dataset_paper = "w8ay/secgpt"
+# 训练方式
+train_option = "pretrain"  # pretrain or sft
 # lora
 use_lora = True
 pre_lora_train_path = ""  # 如果要继续上一个lora训练，这里填上上一个lora训练的地址
@@ -57,10 +59,15 @@ def save_loss_pic():
 
 
 def prepare_data():
-    # security paper
-    data_engine = pretrain.DataEngine(
-        tokenizer, batch_size, max_position_embeddings,
-        data_path=dataset_paper)
+    # 预训练
+    if train_option == "pretrain":
+        data_engine = pretrain.DataEngine(
+            tokenizer, batch_size, max_position_embeddings,
+            data_path=dataset_paper)
+    else:
+        # sft训练
+        data_engine = sft.DataEngine(tokenizer, batch_size, max_position_embeddings,
+                                     data_path=dataset_paper)
     return data_engine
 
 
