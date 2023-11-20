@@ -16,7 +16,7 @@ else:
 
 
 def reformat_sft(instruction, input):
-    if instruction:
+    if input:
         prefix = (
             "Below is an instruction that describes a task, paired with an input that provides further context. "
             "Write a response that appropriately completes the request.\n"
@@ -26,7 +26,7 @@ def reformat_sft(instruction, input):
         prefix = (
             "Below is an instruction that describes a task. "
             "Write a response that appropriately completes the request.\n"
-            f"### Instruction:\n{input}\n\n### Response:"
+            f"### Instruction:\n{instruction}\n\n### Response:"
         )
     return prefix
 
@@ -161,7 +161,8 @@ def main(
         return inner
 
     with gr.Blocks() as demo:
-        gr.Markdown("# 云起无垠SecGPT模型RLHF测试\n\nHuggingface: https://huggingface.co/w8ay/secgpt\nGithub: https://github.com/Clouditera/secgpt")
+        gr.Markdown(
+            "# 云起无垠SecGPT模型RLHF测试\n\nHuggingface: https://huggingface.co/w8ay/secgpt\nGithub: https://github.com/Clouditera/secgpt")
         with gr.Row():
             with gr.Column():  # 列排列
                 context = gr.Textbox(
