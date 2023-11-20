@@ -1,0 +1,194 @@
+[
+  {
+    "Question": "防范密码嗅探攻击计算机系统的控制措施包括下列哪一项？",
+    "A": "静态和重复使用的密码",
+    "B": "加密和重复使用的密码。",
+    "C": "一次性密码和加密。",
+    "D": "静态和一次性密码。",
+    "Answer": "C"
+  },
+  {
+    "Question": "Kerberos可以防止以下哪种攻击正确的是",
+    "A": "隧道攻击。",
+    "B": "重放攻击。",
+    "C": "破坏性攻击。",
+    "D": "处理攻击。",
+    "Answer": "B"
+  },
+  {
+    "Question": "下述攻击手段中不属于DOS攻击的是",
+    "A": "Smurf攻击",
+    "B": "Land攻击",
+    "C": "Teardrop攻击",
+    "D": "CGI溢出攻击",
+    "Answer": "D"
+  },
+  {
+    "Question": "mysql的网站注入对5.0以下版本的说法正确的是",
+    "B": "5.0以下没有information_schema这个系统表，无法列表名等，只能暴力跑表名",
+    "A": "5.0以下无法获取用户名",
+    "C": "5.0以下对大小写敏感",
+    "D": "5.0以下是多用户多操作",
+    "Answer": "B"
+  },
+  {
+    "Question": "RDP的默认端口号为",
+    "A": "3389",
+    "B": "22",
+    "C": "23",
+    "D": "443",
+    "Answer": "A"
+  },
+  {
+    "Question": "Hydra 工具中的 -L 参数的含义是",
+    "A": "指定单个密码",
+    "B": "指定一个密码字典",
+    "C": "指定一个用户名",
+    "D": "指定一个用户名字典",
+    "Answer": "D"
+  },
+  {
+    "Question": "在Google Hacking 中，下面哪一个是搜索指定文件类型的语句",
+    "A": "intext",
+    "B": "intitle",
+    "C": "site",
+    "D": "filetype",
+    "Answer": "D"
+  },
+  {
+    "Question": "通过修改HTTP headers 中的哪个键值可以伪造来源网址",
+    "A": "X-Forwarded-For",
+    "B": "User-Agent",
+    "C": "Accept",
+    "D": "Referer",
+    "Answer": "D"
+  },
+  {
+    "Question": "字段值为“YWRtaW44ODg=”，采用了以下哪种加密方式",
+    "A": "MD5",
+    "B": "BASE64",
+    "C": "AES",
+    "D": "DES",
+    "Answer": "B"
+  },
+  {
+    "Question": "下列不属于XSS攻击类型的是",
+    "A": "反射型XSS",
+    "B": "存储型XSS",
+    "C": "DOM型XSS",
+    "D": "延时型XSS",
+    "Answer": "D"
+  },
+  {
+    "Question": "下列哪个不是SQL注入常见参数？",
+    "A": "user()",
+    "B": "database()",
+    "C": "version()",
+    "D": "get_message()",
+    "Answer": "D"
+  },
+  {
+    "Question": "SQL注入中的延时函数通常用于什么目的？",
+    "A": "计算数学表达式",
+    "B": "提高攻击速度",
+    "C": "增加攻击的可靠性",
+    "D": "延迟查询执行以检测漏洞",
+    "Answer": "D"
+  },
+  {
+    "Question": "以下哪个不是PHP直接执行代码的函数？",
+    "A": "eval()",
+    "B": "assert()",
+    "C": "print()",
+    "D": "create_function()",
+    "Answer": "B"
+  },
+  {
+    "Question": "以下哪个CVE不是和shiro组件相关",
+    "A": "CVE-2020-11989",
+    "B": "CVE-2016-6802",
+    "C": "CVE-2016-4437",
+    "D": "CVE-2020-1759",
+    "Answer": "D"
+  },
+  {
+    "Question": "Struts2历史漏洞利用编号为S2-045的漏洞是什么类型的漏洞",
+    "A": "远程代码执行漏洞",
+    "B": "SQL注入漏洞",
+    "C": "任意文件读取漏洞",
+    "D": "任意文件上传漏洞",
+    "Answer": "A"
+  },
+  {
+    "Question": "以下那个不是shiro的认证方式",
+    "A": "JWT",
+    "B": "Cookie",
+    "C": "Basic",
+    "D": "OAuth",
+    "Answer": "D"
+  },
+  {
+    "Question": "哪个不是Java反序列化的Gadget",
+    "A": "CommonsBeanutils1",
+    "B": "CommonsCollections2",
+    "C": "CommonsCollections3",
+    "D": "CommonsBeanutilsHash",
+    "Answer": "D"
+  },
+  {
+    "Question": "以下哪个不是Jboos的历史漏洞CVE",
+    "A": "CVE-2017-12149",
+    "B": "CVE-2017-7504",
+    "C": "CVE-2015-7501",
+    "D": "CVE-2017-12111",
+    "Answer": "D"
+  },
+  {
+    "Question": "以下哪个不是SSRF 漏洞出现的场景",
+    "A": "从远程服务器请求资源（Upload from URL，Import & Export RSS Feed）",
+    "B": "数据库内置功能（Oracle、MongoDB、MSSQL、Postgres、CouchDB）",
+    "C": "Webmail 收取其他邮箱邮件（POP3、IMAP、SMTP）",
+    "D": "浏览静态网页（HTML、CSS、JS）",
+    "Answer": "D"
+  },
+  {
+    "Question": "对于32位寄存器的描述，不正确的是",
+    "A": "EIP是存放当前指令地址的寄存器",
+    "B": "ESP是存放当前栈顶地址的寄存器",
+    "C": "EBP是存放当前栈底地址的寄存器",
+    "D": "EBX基地址(base)寄存器, 在内存寻址时存放基地址",
+    "Answer": "D"
+  },
+  {
+    "Question": "下列有关域渗透环境命令与描述中，错误的是",
+    "A": "查看所有域 net view /domain",
+    "B": "查看域中所有用户名 net user /domain dsquery user",
+    "C": "查看域密码策略信息 net accounts /domain",
+    "D": "查询域中所有的组 dsquery site",
+    "Answer": "D"
+  },
+  {
+    "Question": "下列有关网络安全技术的描述，错误的是",
+    "A": "Source code intended to be kept server-side can sometimes end up being disclosed to users. Such code may contain sensitive information such as database passwords and secret keys, which may help malicious users formulate attacks against the application.",
+    "D": "Denial of Service is a type of attack on a service that disrupts its normal function and prevents other users from accessing it",
+    "C": "A CRLF Injection attack occurs when a user manages to submit a CRLF into an application. This is most commonly done by modifying an HTTP parameter or URL.",
+    "B": "A Cross-Site Scripting (XSS) attack is a type of security flaw that allows an attacker to upload malicious files onto a server.",
+    "Answer": "B"
+  },
+  {
+    "Question": "51％攻击是一种双花攻击，攻击者需要控制超过50％的哈希率来实现。",
+    "A": "对",
+    "B": "错",
+    "C": "无法确认",
+    "D": "以上都不是",
+    "Answer": "A"
+  },
+  {
+    "Question": "基于CRC32的攻击方式是利用CRC32校验码的特性，针对ZIP文件的哪一部分进行攻击？",
+    "A": "压缩源文件数据区",
+    "B": "核心目录",
+    "C": "目录结束",
+    "D": "数据描述符",
+    "Answer": "B"
+  }
+]
