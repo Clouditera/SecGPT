@@ -1,5 +1,7 @@
 
 # SecGPT 网络安全大模型
+探索使用网络安全知识训练大模型，能达到怎样的能力边界。
+模型地址：https://huggingface.co/w8ay/secgpt
 
 ## 训练步骤
 ### 1. 基座模型：Baichuan-13B
