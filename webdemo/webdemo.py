@@ -112,7 +112,7 @@ def main(
             temperature = 1
         if not (1 > top_p > 0):
             top_p = 1
-        if not (1024 > max_new_tokens > 0):
+        if not (2000 > max_new_tokens > 0):
             max_new_tokens = 200
         if not (5 > repetition_penalty > 0):
             repetition_penalty = 1.1
@@ -161,7 +161,7 @@ def main(
         return inner
 
     with gr.Blocks() as demo:
-        gr.Markdown("# 云起无垠SecGPT模型RLHF测试\n\n## Huggingface: https://huggingface.co/w8ay/secgpt")
+        gr.Markdown("# 云起无垠SecGPT模型RLHF测试\n\nHuggingface: https://huggingface.co/w8ay/secgpt\nGithub: https://github.com/Clouditera/secgpt")
         with gr.Row():
             with gr.Column():  # 列排列
                 context = gr.Textbox(
@@ -221,7 +221,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='云起无垠SecGPT模型RLHF测试')
     parser.add_argument("--base_model", type=str, required=True, help="基础模型")
-    parser.add_argument("--lora", type=str, required=True, help="lora模型")
+    parser.add_argument("--lora", type=str, help="lora模型")
     parser.add_argument("--share_gradio", type=bool, default=False, help="开放外网访问")
     args = parser.parse_args()
     main(args.base_model, args.lora, args.share_gradio)

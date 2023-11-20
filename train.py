@@ -9,6 +9,30 @@ from peft import PeftModel, LoraConfig, TaskType, get_peft_model
 import transformers
 import matplotlib.pyplot as plt
 
+# 最大token长度
+max_position_embeddings = 2048
+# batch size大小
+batch_size = 4
+# 梯度累积
+accumulation_steps = 8
+# 训练多少个epoch
+num_train_epochs = 10
+# 每隔多少步保存一次模型
+save_steps = 400
+# 每隔多少步打印一次日志
+logging_steps = 50
+# 学习率
+lr = 1e-4
+# 预训练地址
+pre_train_path = "models/Baichuan-13B-Base"
+# 训练数据json地址
+dataset_paper = "data.json"
+# lora
+use_lora = True
+pre_lora_train_path = ""  # 如果要继续上一个lora训练，这里填上上一个lora训练的地址
+lora_rank = 8
+lora_alpha = 32
+
 global_pic = {
     "step": [],
     "loss": []
@@ -151,30 +175,6 @@ def train(model, epoch):
 
 
 if __name__ == "__main__":
-    # 最大token长度
-    max_position_embeddings = 2048
-    # batch size大小
-    batch_size = 4
-    # 梯度累积
-    accumulation_steps = 8
-    # 训练多少个epoch
-    num_train_epochs = 10
-    # 每隔多少步保存一次模型
-    save_steps = 400
-    # 每隔多少步打印一次日志
-    logging_steps = 50
-    # 学习率
-    lr = 1e-4
-    # 预训练地址
-    pre_train_path = "../models/Baichuan-13B-Base"
-    # 训练数据json地址
-    dataset_paper = "data.json"
-    # lora
-    use_lora = True
-    # 如果要继续上一个lora训练，这里填上上一个lora训练的地址
-    pre_lora_train_path = ""
-    lora_rank = 8
-    lora_alpha = 32
     # output
     output_dir = "output"
 
