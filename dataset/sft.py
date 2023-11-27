@@ -4,7 +4,7 @@ from datasets import load_dataset
 
 
 def reformat_sft(instruction, input):
-    if instruction:
+    if input:
         prefix = (
             "Below is an instruction that describes a task, paired with an input that provides further context. "
             "Write a response that appropriately completes the request.\n"
