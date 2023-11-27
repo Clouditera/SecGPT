@@ -14,7 +14,7 @@ def reformat_sft(instruction, input):
         prefix = (
             "Below is an instruction that describes a task. "
             "Write a response that appropriately completes the request.\n"
-            f"### Instruction:\n{input}\n\n### Response:"
+            f"### Instruction:\n{instruction}\n\n### Response:"
         )
     return prefix
 
