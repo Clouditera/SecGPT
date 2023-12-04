@@ -7,7 +7,7 @@ class DataEngine():
     def __init__(self, tokenizer, micro_batch_size, max_length, checkpoint_step=0, data_path="", fieldName="text"):
         self.MIN_TEXT_LEN = 20
 
-        self.EOS_TOKEN_ID = tokenizer.eos_token_id
+        self.EOS_TOKEN_ID = tokenizer.eos_token_id or tokenizer.eod_id  # for qwen
         self.PAD_TOKEN_ID = tokenizer.pad_token_id or self.EOS_TOKEN_ID
         assert self.EOS_TOKEN_ID
 
@@ -28,14 +28,15 @@ class DataEngine():
         print("数据加载完毕")
 
     def collect(self):
-        index = self.micro_batch_size * (self.max_length)
+        index = self.micro_batch_size * self.max_length
         while self.index < len(self.train_dataset):
             if len(self.data) >= index:
                 data = self.data[:index]
                 self.data = self.data[index:]
-                if len(data) < index:
-                    padding_length = index - len(data)
-                    data = data + [self.PAD_TOKEN_ID] * padding_length
+                # 判断EOS是否在data
+                if self.EOS_TOKEN_ID in data and data.index(self.EOS_TOKEN_ID) < self.MIN_TEXT_LEN:
+                    data = data[data.index(self.EOS_TOKEN_ID):]
+                    data = data + [self.PAD_TOKEN_ID] * (index - len(data))
                 seq = np.asarray(data).reshape(self.micro_batch_size, self.max_length)
                 data = torch.LongTensor(seq)
                 yield dict(
