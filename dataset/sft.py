@@ -20,7 +20,7 @@ def reformat_sft(instruction, input):
 
 
 def preprocess2(sources, tokenizer, max_length):
-    EOS_TOKEN_ID = tokenizer.eos_token_id or 151643
+    EOS_TOKEN_ID = tokenizer.eos_token_id or tokenizer.eod_id # for qwen
     tokenizer.pad_token_id = tokenizer.pad_token_id or EOS_TOKEN_ID
     IGNORE_TOKEN_ID = -100
     g_input_ids = []
