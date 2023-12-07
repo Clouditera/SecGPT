@@ -88,7 +88,9 @@ def prepare_ref_model():
         trust_remote_code=True,
     )
     config.use_cache = False
-    model = AutoModelForCausalLM.from_pretrained(pre_train_path, trust_remote_code=True, device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(pre_train_path, trust_remote_code=True, device_map="cuda:2",
+                                                 config=config)
+    model.eval()
     return model
 
 
@@ -99,7 +101,8 @@ def prepare_model():
         trust_remote_code=True,
     )
     config.use_cache = False
-    model = AutoModelForCausalLM.from_pretrained(pre_train_path, trust_remote_code=True, device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(pre_train_path, trust_remote_code=True, device_map="auto",
+                                                 config=config)
     print("模型加载完毕")
     # 加载lora模型
     if use_lora:
@@ -142,7 +145,7 @@ def print_model_parameters(model):
 
 
 def _get_batch_logps(logits: torch.FloatTensor, labels: torch.LongTensor, average_log_prob: bool = False,
-                     tokenizer: transformers.PreTrainedTokenizer = None) -> torch.FloatTensor:
+                     ) -> torch.FloatTensor:
     """Compute the log probabilities of the given labels under the given logits.
 
     Args:
@@ -157,10 +160,11 @@ def _get_batch_logps(logits: torch.FloatTensor, labels: torch.LongTensor, averag
 
     labels = labels[:, 1:].clone()
     logits = logits[:, :-1, :]
-    loss_mask = (labels != tokenizer.pad_token_id)
+
+    loss_mask = labels != -100
 
     # dummy token; we'll ignore the losses on these tokens later
-    labels[labels == tokenizer.pad_token_id] = 0
+    labels[labels == -100] = 0
 
     per_token_logps = torch.gather(logits.log_softmax(-1), dim=2, index=labels.unsqueeze(2)).squeeze(2)
 
@@ -174,7 +178,6 @@ def dpo_loss(policy_chosen_logps: torch.FloatTensor,
              policy_rejected_logps: torch.FloatTensor,
              reference_chosen_logps: torch.FloatTensor,
              reference_rejected_logps: torch.FloatTensor,
-             beta: float,
              reference_free: bool = False) -> Tuple[torch.FloatTensor, torch.FloatTensor, torch.FloatTensor]:
     """Compute the DPO loss for a batch of policy and reference model log probabilities.
 
@@ -193,18 +196,24 @@ def dpo_loss(policy_chosen_logps: torch.FloatTensor,
     """
 
     pi_logratios = policy_chosen_logps - policy_rejected_logps
-    ref_logratios = reference_chosen_logps - reference_rejected_logps
-
     if reference_free:
         ref_logratios = 0
+    else:
+        ref_logratios = reference_chosen_logps - reference_rejected_logps
 
     logits = pi_logratios - ref_logratios
 
-    beta_logits = beta * logits
+    # The beta is a temperature parameter for the DPO loss, typically something in the range of 0.1 to 0.5.
+    # We ignore the reference model as beta -> 0. The label_smoothing parameter encodes our uncertainty about the labels and
+    # calculates a conservative DPO loss.
+    label_smoothing = 0
+    losses = (
+            -F.logsigmoid(dpo_beta * logits) * (1 - label_smoothing)
+            - F.logsigmoid(-dpo_beta * logits) * label_smoothing
+    )
 
-    losses = -F.logsigmoid(beta_logits)
-    chosen_rewards = beta * (policy_chosen_logps - reference_chosen_logps).detach()
-    rejected_rewards = beta * (policy_rejected_logps - reference_rejected_logps).detach()
+    chosen_rewards = dpo_beta * (policy_chosen_logps).detach()
+    rejected_rewards = dpo_beta * (policy_rejected_logps).detach()
 
     return losses, chosen_rewards, rejected_rewards
 
@@ -220,39 +229,39 @@ def train(model, reference_model, epoch):
     running_loss = 0
     epoch_loss = 0
     for item in data_engine.get_data():
-        chosen_input_ids = item["chosen_input_ids"].cuda()
-        choose_labels_ids = item["choose_labels_ids"].cuda()
-        rejected_input_ids = item["rejected_input_ids"].cuda()
-        reject_labels_ids = item["reject_labels_ids"].cuda()
+        chosen_input_ids = item["chosen_input_ids"]
+        choose_labels_ids = item["choose_labels_ids"]
+        rejected_input_ids = item["rejected_input_ids"]
+        reject_labels_ids = item["reject_labels_ids"]
+        # with torch.no_grad():
+        #     chosen_input_ids = chosen_input_ids.cuda(2)
+        #     choose_labels_ids = choose_labels_ids.cuda(2)
+        #     rejected_input_ids = rejected_input_ids.cuda(2)
+        #     reject_labels_ids = reject_labels_ids.cuda(2)
+        #     reference_chosen_logits = reference_model.forward(input_ids=chosen_input_ids,
+        #                                                       labels=choose_labels_ids).logits
+        #     reference_rejected_logits = reference_model.forward(input_ids=rejected_input_ids,
+        #                                                         labels=reject_labels_ids).logits
 
-        with torch.no_grad():
-            reference_chosen_logits = reference_model(input_ids=chosen_input_ids, label=choose_labels_ids).logits
-            reference_rejected_logits = reference_model(input_ids=rejected_input_ids, label=reject_labels_ids).logits
+        chosen_input_ids = chosen_input_ids.cuda()
+        choose_labels_ids = choose_labels_ids.cuda()
+        rejected_input_ids = rejected_input_ids.cuda()
+        reject_labels_ids = reject_labels_ids.cuda()
 
-        policy_chosen_outputs = model(input_ids=chosen_input_ids,
-                                      label=choose_labels_ids)
-        policy_chosen_logits = policy_chosen_outputs.logits
+        policy_chosen_logits = model(input_ids=chosen_input_ids, labels=choose_labels_ids).logits.to(torch.float32)
+        policy_chosen_logps = _get_batch_logps(policy_chosen_logits, choose_labels_ids, average_log_prob=False)
 
-        policy_rejected_logits = model(input_ids=rejected_input_ids,
-                                       label=reject_labels_ids).logits
-        policy_chosen_logps = _get_batch_logps(policy_chosen_logits, choose_labels_ids, average_log_prob=False,
-                                               tokenizer=tokenizer)
-        policy_rejected_logps = _get_batch_logps(policy_rejected_logits, reject_labels_ids, average_log_prob=False,
-                                                 tokenizer=tokenizer)
-        reference_chosen_logps = _get_batch_logps(reference_chosen_logits, choose_labels_ids, average_log_prob=False,
-                                                  tokenizer=tokenizer)
-        reference_rejected_logps = _get_batch_logps(reference_rejected_logits, reject_labels_ids,
-                                                    average_log_prob=False, tokenizer=tokenizer)
+        policy_rejected_logits = model(input_ids=rejected_input_ids, labels=reject_labels_ids).logits.to(torch.float32)
+        policy_rejected_logps = _get_batch_logps(policy_rejected_logits, reject_labels_ids, average_log_prob=False)
+        # reference_chosen_logits = reference_chosen_logits.to(choose_labels_ids.device)
+        # reference_rejected_logits = reference_rejected_logits.to(reject_labels_ids.device)
+        # reference_chosen_logps = _get_batch_logps(reference_chosen_logits, choose_labels_ids, average_log_prob=False,
+        #                                           tokenizer=tokenizer)
+        # reference_rejected_logps = _get_batch_logps(reference_rejected_logits, reject_labels_ids,
+        #                                             average_log_prob=False, tokenizer=tokenizer)
 
         loss, chosen_rewards, rejected_rewards = dpo_loss(
-            policy_chosen_logps, policy_rejected_logps, reference_chosen_logps, reference_rejected_logps,
-            beta=dpo_beta, reference_free=False)
-
-        output_dict = {'chosen_rewards': chosen_rewards.mean(),
-                       'rejected_rewards': rejected_rewards.mean()
-                       }
-        print(output_dict)
-
+            policy_chosen_logps, policy_rejected_logps, torch.FloatTensor(0), torch.FloatTensor(0), reference_free=True)
         show_loss = loss.mean().item()
         running_loss += show_loss
         epoch_loss += show_loss
@@ -273,7 +282,9 @@ def train(model, reference_model, epoch):
             save_model(model, f"{output_dir}/epoch-{epoch}-step-{step}")
         pbar.set_postfix({
             "step": step,
-            "loss": show_loss
+            "loss": show_loss,
+            "chosen_rewards": chosen_rewards.item(),
+            "rejected_rewards": rejected_rewards.item()
         })
         pbar.update(1)
         step += 1
@@ -290,16 +301,13 @@ if __name__ == "__main__":
     # output
 
     tokenizer = AutoTokenizer.from_pretrained(pre_train_path, trust_remote_code=True)
-    tokenizer.pad_token_id = -100
 
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
-    data_engine = prepare_data()
     model_engine = prepare_model()
-    ref_model = prepare_ref_model()
-    print_model_parameters(model_engine)
+    # ref_model = prepare_ref_model()
 
     optimizer = AdamW(model_engine.parameters(), lr=lr, correct_bias=True)
 
     for i in range(num_train_epochs):
-        train(model_engine, ref_model, i)
+        train(model_engine, None, i)
