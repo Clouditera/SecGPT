@@ -12,28 +12,30 @@ import matplotlib.pyplot as plt
 import torch.nn.functional as F
 
 # 最大token长度
-max_position_embeddings = 2048
+max_position_embeddings = 4096
 # batch size大小
-batch_size = 4
+batch_size = 1
 # 梯度累积
-accumulation_steps = 8
+accumulation_steps = 16
 # 训练多少个epoch
 num_train_epochs = 10
 # 每隔多少步保存一次模型
-save_steps = 400
+save_steps = 50000
 # 每隔多少步打印一次日志
-logging_steps = 50
+logging_steps = 2000
 # 学习率
-lr = 1e-4
+lr = 1e-5
 # 预训练地址
-pre_train_path = "models/Baichuan-13B-Base"
+# pre_train_path = "../models/Qwen-14B"
+pre_train_path = "phi-output/base005"
+pre_tokenizer_path = "../models/Qwen-1_8B"
 # 训练数据json地址
-dataset_paper = "w8ay/secgpt"
+dataset_paper = "/home/clouditera/jupyter/datasets/dpo/dpo.json"
 # 训练方式
 dpo_beta = 0.3
-output_dir = "output"
+output_dir = "phi-output"
 # lora
-use_lora = True
+use_lora = False
 pre_lora_train_path = ""  # 如果要继续上一个lora训练，这里填上上一个lora训练的地址
 lora_rank = 8
 lora_alpha = 32
@@ -272,7 +274,7 @@ def train(model, reference_model, epoch):
         if step > 0 and step % accumulation_steps == 0:
             optimizer.step()
             optimizer.zero_grad()
-        if step % logging_steps == 0:
+        if step != 0 and step % logging_steps == 0:
             print(f"step: {step}, loss: {running_loss / logging_steps}")
             global_pic["step"].append(global_step)
             global_pic["loss"].append(running_loss / logging_steps)

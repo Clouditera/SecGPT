@@ -158,7 +158,7 @@ def train(model, epoch):
         if step > 0 and step % accumulation_steps == 0:
             optimizer.step()
             optimizer.zero_grad()
-        if step % logging_steps == 0:
+        if step != 0 and step % logging_steps == 0:
             print(f"step: {step}, loss: {running_loss / logging_steps}")
             global_pic["step"].append(global_step)
             global_pic["loss"].append(running_loss / logging_steps)
