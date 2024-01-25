@@ -101,7 +101,7 @@
     "B": "assert()",
     "C": "print()",
     "D": "create_function()",
-    "Answer": "B"
+    "Answer": "C"
   },
   {
     "Question": "以下哪个CVE不是和shiro组件相关",
@@ -152,14 +152,6 @@
     "Answer": "D"
   },
   {
-    "Question": "对于32位寄存器的描述，不正确的是",
-    "A": "EIP是存放当前指令地址的寄存器",
-    "B": "ESP是存放当前栈顶地址的寄存器",
-    "C": "EBP是存放当前栈底地址的寄存器",
-    "D": "EBX基地址(base)寄存器, 在内存寻址时存放基地址",
-    "Answer": "D"
-  },
-  {
     "Question": "下列有关域渗透环境命令与描述中，错误的是",
     "A": "查看所有域 net view /domain",
     "B": "查看域中所有用户名 net user /domain dsquery user",
@@ -190,5 +182,61 @@
     "C": "目录结束",
     "D": "数据描述符",
     "Answer": "B"
+  },
+  {
+    "Question": "When can executives be charged with  negligence?",
+    "A": "If they follow the transborder  laws",
+    "B": "If they do not properly report and prosecute  attackers",
+    "C": "If they properly inform users that they may be  monitored",
+    "D": "If they do not practice due care when protecting  resources",
+    "Answer": "D"
+  },
+  {
+    "Question": "内部审计部门编写了一些脚本，用于对某些信息系统持续审计。IT  部门要求获得脚本副本，以用来在关键系统上设立连续监控流程。与 IT 部门分享这些脚本是否会影响信息系统审计师独立、客观地审计IT部门的能力？",
+    "A": "不允许分享脚本，因为这会使IT部门能够对系统进行预审计并避开精确、全面的审计。",
+    "B": "无论是否削弱审计独立性都需要分享脚本，因为 IT 部门必须能够审核在信息系统上运行的所有程序和软件。",
+    "C": "如果IT部门认识到审计还可能在脚本覆盖范围以外进行，便可以允许分享脚本。",
+    "D": "不允许分享脚本，因为编写脚本的信息系统审计师将不被允许审计任何使用该脚本进行监控的信息系统。",
+    "Answer": "C"
+  },
+  {
+    "Question": "Which of these devices would not be  considered part of the Internet of Things?",
+    "A": "Smartphone",
+    "B": "Thermostat",
+    "C": "Light bulb",
+    "D": "Set‐top cable box",
+    "Answer": "A"
+  },
+  {
+    "Question": "Alice runs a small software development  company, and wants to use a cloud environment to install, test, and modify  applications across a number of operating systems (OSs). Which cloud service  model is probably best for her purposes?",
+    "A": "IaaS",
+    "B": "PaaS",
+    "C": "SaaS",
+    "D": "Grimbo",
+    "Answer": "B"
+  },
+  {
+    "Question": "若内存地址区间为 4000H~43FFH，每个存储单位可存储 16  位二进制数，该内存区域由 4 片存储器芯片构成，>则构成该内存所用的存储器芯片的容量是（  ）。",
+    "A": "512×16bit",
+    "B": "256×8bit",
+    "C": "256×16bit",
+    "D": "1024×8bit",
+    "Answer": "C"
+  },
+  {
+    "Question": "如果使用 sqlmap  进行注入时需要指定注入技术，则需要使用哪个参数（）",
+    "A": "—dbs",
+    "B": "—risk",
+    "C": "—Level",
+    "D": "—technique",
+    "Answer": "D"
+  },
+  {
+    "Question": "哪种类型的云服务能为员工提供单点登录，实现一次登录访问公司所有的应用程序",
+    "A": "SaaS",
+    "B": "PaaS",
+    "C": "IaaS",
+    "D": "IdaaS",
+    "Answer": "D"
   }
 ]
