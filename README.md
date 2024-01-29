@@ -80,7 +80,7 @@ pre_lora_train_path = "output/secgpt-epoch-1"  # 预训练lora保存目录
 ### 5. 效果展示
 模型结果的输出有着随机性，模型可能知道答案，但是随机后改变输出，这时候可以增加提示词让模型注意力集中，也可以做RLHF强化学习：让模型输出多个结果，选择正确的那个，提升模型效果。
 ```
-pytho webdemo.py --base_model w8ay/secgpt
+python webdemo.py --base_model w8ay/secgpt
 ```
 自带RLHF选择器，模型会输出三个结果，选择最好的一个记录下来，可对后面RLHF微调模型提供数据参考。
 
