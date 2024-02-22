@@ -190,6 +190,11 @@ https://huggingface.co/datasets/w8ay/security-paper-datasets
 
 ## 联系我们
 ![image](images/20240220-164216.jpg)
-
 ## 免责声明
 用户在使用本模型时，应充分了解网络安全模型的特性，并对生成的内容进行谨慎评估和使用。如果要公开使用或商用该模型服务，请注意服务方需承担由此产生的不良影响或有害言论的责任，本项目开发者不承担任何由使用本项目（包括但不限于数据、模型、代码等）导致的危害或损失。
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=mo-xiaoxi/GPTSecurity&type=Date)](https://star-history.com/#mo-xiaoxi/GPTSecurity&Date)
+
