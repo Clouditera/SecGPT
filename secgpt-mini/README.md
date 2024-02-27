@@ -1,5 +1,7 @@
 CPU就能跑！
 
+开源地址：https://huggingface.co/clouditera/secgpt-mini
+
 ## Docker一键运行
 ```dockerfile
 FROM python:slim
