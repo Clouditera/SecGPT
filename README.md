@@ -6,6 +6,8 @@
 - [huggingface](https://huggingface.co/clouditera/secgpt)
 - [wisemodel](https://wisemodel.cn/models/clouditera/secgpt)
 
+**最新**
+- [SecGpt-Mini已经发布，可以在CPU运行](./secgpt-mini/README.md)
 
 ## 模型介绍
 SecGPT的愿景是将人工智能技术引入网络安全领域，以提高网络防御的效率和效果。其使命是推动网络安全智能化，为社会提供更安全的数字生活环境。
