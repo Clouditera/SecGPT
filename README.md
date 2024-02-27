@@ -3,8 +3,8 @@
 探索使用网络安全知识训练大模型，能达到怎样的能力边界。
 
 **模型下载**
-- [huggingface](https://huggingface.co/w8ay/secgpt)
-- [wisemodel](https://wisemodel.cn/models/w8ay/secgpt)
+- [huggingface](https://huggingface.co/clouditera/secgpt)
+- [wisemodel](https://wisemodel.cn/models/clouditera/secgpt)
 
 
 ## 模型介绍
@@ -114,7 +114,7 @@ SecGPT提供了精选的高质量网络安全类无监督训练集，使模型�
 
 ② 数据集开源地址：
 
-https://huggingface.co/datasets/w8ay/security-paper-datasets
+https://huggingface.co/datasets/clouditera/security-paper-datasets
 
 ![image](images/640%208.png)
 
@@ -150,9 +150,7 @@ https://huggingface.co/datasets/w8ay/security-paper-datasets
 
 为了改善模型的输出质量，有以下两种策略可供选择。首先，可以通过使用更明确的提示词来引导模型，使其更专注于用户需求，从而生成更有针对性的回答。其次，可以采用RLHF强化学习方法，模型将生成多个答案，用户可以手动选择最优的答案，在后面进行强化学习，从而不断提高模型对齐的能力。
 
-
 SecGPT模型具备内置的RLHF选择器，每次会输出三个不同的答案。用户可以根据需求选择最佳答案，同时这也为后续的RLHF微调提供了有价值的数据，有助于模型进一步提升输出的质量。这些方法共同作用，有助于确保模型输出满足用户的预期，并在网络安全等领域中发挥更大的作用。
-
 
 ![image](images/64.png)
 
@@ -172,13 +170,13 @@ https://github.com/Clouditera/secgpt
 ② 模型地址：
 
 
-https://huggingface.co/w8ay/secgpt
+https://huggingface.co/clouditera/secgpt
 
 
 ③ 数据集地址：
 
 
-https://huggingface.co/datasets/w8ay/security-paper-datasets
+https://huggingface.co/datasets/clouditera/security-paper-datasets
 
 
 
@@ -189,7 +187,12 @@ https://huggingface.co/datasets/w8ay/security-paper-datasets
 
 
 ## 联系我们
-![image](images/20240220-164216.jpg)
+<div align=center><img src="images/20240220-164216.jpg" alt="" width="70%" height="40%">
+</div>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Clouditera/secgpt&type=Date)](https://star-history.com/#Clouditera/secgpt&Date)
 
 ## 免责声明
 用户在使用本模型时，应充分了解网络安全模型的特性，并对生成的内容进行谨慎评估和使用。如果要公开使用或商用该模型服务，请注意服务方需承担由此产生的不良影响或有害言论的责任，本项目开发者不承担任何由使用本项目（包括但不限于数据、模型、代码等）导致的危害或损失。
