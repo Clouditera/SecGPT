@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-device = 'cuda:2' if torch.cuda.is_available() else 'cpu'
+device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 # 参数解析
 import argparse
 
@@ -14,8 +14,7 @@ parser.add_argument("--tokenizer", type=str, default="", help="分词器名称")
 args = parser.parse_args()
 
 tokenizer = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
-model = AutoModelForCausalLM.from_pretrained(args.tokenizer, device_map="auto", trust_remote_code=True)
-
+model = AutoModelForCausalLM.from_pretrained(args.tokenizer, device_map=device, trust_remote_code=True)
 
 print("模型加载完毕")
 import json

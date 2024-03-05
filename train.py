@@ -1,39 +1,14 @@
+import json
 import os.path
 
+import matplotlib.pyplot as plt
 import torch
+import transformers
+from peft import PeftModel, LoraConfig, TaskType, get_peft_model
 from tqdm import tqdm
 from transformers import AutoTokenizer, AdamW, AutoModelForCausalLM
 
-from dataset import pretrain, sft
-from peft import PeftModel, LoraConfig, TaskType, get_peft_model
-import transformers
-import matplotlib.pyplot as plt
-
-# 最大token长度
-max_position_embeddings = 2048
-# batch size大小
-batch_size = 4
-# 梯度累积
-accumulation_steps = 8
-# 训练多少个epoch
-num_train_epochs = 10
-# 每隔多少步保存一次模型
-save_steps = 400
-# 每隔多少步打印一次日志
-logging_steps = 50
-# 学习率
-lr = 1e-4
-# 预训练地址
-pre_train_path = "models/Baichuan-13B-Base"
-# 训练数据json地址
-dataset_paper = "w8ay/secgpt"
-# 训练方式
-train_option = "pretrain"  # pretrain or sft
-# lora
-use_lora = True
-pre_lora_train_path = ""  # 如果要继续上一个lora训练，这里填上上一个lora训练的地址
-lora_rank = 8
-lora_alpha = 32
+from dataset import pretrain, sft, chatml
 
 global_pic = {
     "step": [],
@@ -43,31 +18,37 @@ global_step = 0
 
 
 def save_loss_pic():
+    output_dir = config["output_dir"]
     x = global_pic["step"]
     k1 = global_pic["loss"]
     # print(x,k1)
-
     plt.plot(x, k1, 'o-', color='b', label="loss")  # s-:方形
-
     plt.xlabel("step")  # 横坐标名字
     plt.ylabel("loss")  # 纵坐标名字
-
     # plt.legend(loc = "best")
 
     # plt.show()
-    plt.savefig('foo.png')
+    plt.savefig(output_dir + '/foo.png')
 
 
 def prepare_data():
     # 预训练
+    train_option = config["train_option"]
+    batch_size = config["batch_size"]
+    max_position_embeddings = config["max_position_embeddings"]
+    dataset_path = config["dataset_path"]
     if train_option == "pretrain":
         data_engine = pretrain.DataEngine(
             tokenizer, batch_size, max_position_embeddings,
-            data_path=dataset_paper)
-    else:
-        # sft训练
+            data_path=dataset_path)
+    elif train_option == "sft":
         data_engine = sft.DataEngine(tokenizer, batch_size, max_position_embeddings,
-                                     data_path=dataset_paper)
+                                     data_path=dataset_path)
+    elif train_option == "chatml":
+        data_engine = chatml.DataEngine(tokenizer, batch_size, max_position_embeddings,
+                                        data_path=dataset_path)
+    else:
+        raise ValueError("train_option must be one of pretrain, sft, pretrain_cache")
     return data_engine
 
 
@@ -86,18 +67,20 @@ def find_all_linear_names(peft_model):
 
 
 def prepare_model():
+    pre_train_path = config["pre_train_path"]
     # 加载模型
-    config = transformers.AutoConfig.from_pretrained(
+    mode_config = transformers.AutoConfig.from_pretrained(
         pre_train_path,
         trust_remote_code=True,
     )
-    config.use_cache = False
-    model = AutoModelForCausalLM.from_pretrained(pre_train_path, trust_remote_code=True, device_map="auto")
+    mode_config.use_cache = False
+    model = AutoModelForCausalLM.from_pretrained(pre_train_path, trust_remote_code=True, config=mode_config,
+                                                 device_map="auto")
     print("模型加载完毕")
     # 加载lora模型
-    if use_lora:
-        if pre_lora_train_path:
-            model = PeftModel.from_pretrained(model, pre_lora_train_path, is_trainable=True)
+    if config["use_lora"]:
+        if config["pre_lora_train_path"]:
+            model = PeftModel.from_pretrained(model, config["pre_lora_train_path"], is_trainable=True)
             for name, param in model.named_parameters():
                 if 'lora' in name or 'Lora' in name:
                     param.requires_grad = True
@@ -107,8 +90,8 @@ def prepare_model():
             peft_config = LoraConfig(
                 task_type=TaskType.CAUSAL_LM,
                 inference_mode=False,
-                r=lora_rank,
-                lora_alpha=lora_alpha,
+                r=config["lora_rank"],
+                lora_alpha=config["lora_alpha"],
                 lora_dropout=0.1,
                 target_modules=trainable
             )
@@ -144,6 +127,9 @@ def train(model, epoch):
     step = 0
     running_loss = 0
     epoch_loss = 0
+    accumulation_steps = int(config["accumulation_steps"])
+    logging_steps = int(config["logging_steps"])
+    save_steps = int(config["save_steps"])
     for item in data_engine.get_data():
         input_ids = item["input_ids"].cuda()
         labels = item["labels"].cuda()
@@ -182,18 +168,22 @@ def train(model, epoch):
 
 
 if __name__ == "__main__":
-    # output
-    output_dir = "output"
+    import argparse
 
-    tokenizer = AutoTokenizer.from_pretrained(pre_train_path, trust_remote_code=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=str, default="train.json",
+                        help="预训练模型路径")
+    configparser = parser.parse_args()
 
+    with open(configparser.config, "r", encoding="utf-8") as f:
+        config = json.load(f)
+
+    tokenizer = AutoTokenizer.from_pretrained(config["pre_tokenizer_path"], trust_remote_code=True)
+    output_dir = config["output_dir"]
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
-    data_engine = prepare_data()
     model_engine = prepare_model()
-    print_model_parameters(model_engine)
-
+    lr = config["learning_rate"]
     optimizer = AdamW(model_engine.parameters(), lr=lr, correct_bias=True)
-
-    for i in range(num_train_epochs):
+    for i in range(int(config["num_train_epochs"])):
         train(model_engine, i)

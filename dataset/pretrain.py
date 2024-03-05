@@ -4,7 +4,8 @@ from datasets import load_dataset
 
 
 class DataEngine():
-    def __init__(self, tokenizer, micro_batch_size, max_length, checkpoint_step=0, data_path="", fieldName="text"):
+    def __init__(self, tokenizer, micro_batch_size, max_length,
+                 checkpoint_step=0, data_path="", fieldName="text"):
         self.MIN_TEXT_LEN = 20
 
         self.EOS_TOKEN_ID = tokenizer.eos_token_id or tokenizer.eod_id  # for qwen

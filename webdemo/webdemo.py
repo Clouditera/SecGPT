@@ -77,7 +77,7 @@ def main(
         base_model,
         device_map=device,
         trust_remote_code=True,
-        torch_dtype=torch.float16
+        # torch_dtype=torch.float16
     )
     if lora_weights:
         model = PeftModel.from_pretrained(
@@ -106,7 +106,7 @@ def main(
         prompt = reformat_sft(instruction, "")
 
         inputs = tokenizer(prompt, return_tensors="pt")
-        input_ids = inputs["input_ids"].cuda()
+        input_ids = inputs["input_ids"]
 
         if not (1 > temperature > 0):
             temperature = 1

@@ -1,0 +1,18 @@
+{
+  "max_position_embeddings": 4096,
+  "batch_size": 1,
+  "accumulation_steps": 256,
+  "num_train_epochs": 1,
+  "learning_rate": 1e-05,
+  "save_steps": 1000,
+  "logging_steps": 100,
+  "pre_train_path": "",
+  "pre_tokenizer_path": "",
+  "dataset_path": "",
+  "train_option": "pretrain",
+  "output_dir": "",
+  "use_lora": false,
+  "pre_lora_train_path": "",
+  "lora_rank": 8,
+  "lora_alpha": 32
+}
