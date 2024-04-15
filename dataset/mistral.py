@@ -76,18 +76,18 @@ class DataEngine():
                 g_input_ids.extend(input_ids)
                 g_labels_ids.extend(labels)
             else:
-                g_input_ids = g_input_ids[:max_length] * (max_length - len(g_input_ids)) * padding_token
-                g_labels_ids = g_labels_ids[:max_length] * (max_length - len(g_labels_ids)) * padding_token
+                g_input_ids = g_input_ids[:max_length] + (max_length - len(g_input_ids)) * padding_token
+                g_labels_ids = g_labels_ids[:max_length] + (max_length - len(g_labels_ids)) * padding_token
                 a1 = torch.LongTensor(np.asarray(g_input_ids).reshape(self.micro_batch_size, self.max_length))
                 a2 = torch.LongTensor(np.asarray(g_labels_ids).reshape(self.micro_batch_size, self.max_length))
                 yield dict(input_ids=a1, labels=a2)
                 g_input_ids = input_ids
                 g_labels_ids = labels
         if len(g_input_ids) > 0:
-            g_input_ids = g_input_ids[:max_length] * (max_length - len(g_input_ids)) * padding_token
-            g_labels_ids = g_labels_ids[:max_length] * (max_length - len(g_labels_ids)) * padding_token
+            g_input_ids = g_input_ids[:max_length] + (max_length - len(g_input_ids)) * padding_token
+            g_labels_ids = g_labels_ids[:max_length] + (max_length - len(g_labels_ids)) * padding_token
             a1 = torch.LongTensor(np.asarray(g_input_ids).reshape(self.micro_batch_size, self.max_length))
-            a2 = torch.LongTensor(np.asarray(g_labels_ids)).reshape(self.micro_batch_size, self.max_length)
+            a2 = torch.LongTensor(np.asarray(g_labels_ids).reshape(self.micro_batch_size, self.max_length))
             yield dict(input_ids=a1, labels=a2)
 
     def __len__(self):
@@ -110,4 +110,8 @@ if __name__ == '__main__':
             "content": "222"
         },
     ]
-    print(make_context(chat, AutoTokenizer.from_pretrained("FuseAI/FuseChat-7B-VaRM")))
+    # print(make_context(chat, ))
+    tokenizer = AutoTokenizer.from_pretrained("FuseAI/FuseChat-7B-VaRM")
+    engine = DataEngine(tokenizer, 1, 8192, 0, "D:\数据集\data-index\jibei-清洗\sft-ai\cc.json")
+    for item in engine.get_data():
+        print(item)
