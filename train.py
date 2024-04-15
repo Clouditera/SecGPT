@@ -6,9 +6,9 @@ import torch
 import transformers
 from peft import PeftModel, LoraConfig, TaskType, get_peft_model
 from tqdm import tqdm
-from transformers import AutoTokenizer, AdamW, AutoModelForCausalLM
+from transformers import AutoTokenizer, AdamW, AutoModelForCausalLM, get_linear_schedule_with_warmup
 
-from dataset import pretrain, sft, chatml
+from dataset import pretrain, sft, chatml, mistral
 
 global_pic = {
     "step": [],
@@ -47,6 +47,10 @@ def prepare_data():
     elif train_option == "chatml":
         data_engine = chatml.DataEngine(tokenizer, batch_size, max_position_embeddings,
                                         data_path=dataset_path)
+    elif train_option == "mistral":
+        data_engine = mistral.DataEngine(tokenizer, batch_size, max_position_embeddings,
+                                         data_path=dataset_path)
+
     else:
         raise ValueError("train_option must be one of pretrain, sft, pretrain_cache")
     return data_engine
@@ -185,5 +189,6 @@ if __name__ == "__main__":
     model_engine = prepare_model()
     lr = config["learning_rate"]
     optimizer = AdamW(model_engine.parameters(), lr=lr, correct_bias=True)
+    # scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps = warm_up_ratio * total_steps, num_training_steps = total_steps)
     for i in range(int(config["num_train_epochs"])):
         train(model_engine, i)

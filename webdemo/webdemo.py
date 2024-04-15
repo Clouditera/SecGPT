@@ -129,6 +129,8 @@ def main(
                 do_sample=True,
                 repetition_penalty=repetition_penalty,
                 streamer=streamer,
+                eos_token_id=tokenizer.eos_token_id,
+                pad_token_id=tokenizer.eos_token_id
             )
             c = Thread(target=lambda: model.generate(input_ids=input_ids, **generation_config))
             c.start()
