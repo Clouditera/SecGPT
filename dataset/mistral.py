@@ -50,6 +50,9 @@ class DataEngine():
         self.tokenizer = tokenizer
         self.index = checkpoint_step
         self.data = []
+        stop_token = "<|end_of_turn|>"
+        self.stop_token_ids = tokenizer.encode(stop_token, add_special_tokens=False)
+
         for item in self.train_dataset:
             _, input_ids, labels = make_context(
                 item,
@@ -61,12 +64,31 @@ class DataEngine():
             })
 
     def get_data(self):
+        max_length = self.max_length * self.micro_batch_size
+        g_input_ids = []
+        g_labels_ids = []
+        padding_token = self.stop_token_ids
+
         for item in self.data:
             input_ids = item["input_ids"]
             labels = item["labels"]
-            input_ids = torch.LongTensor(np.asarray(input_ids).reshape(1, self.max_length))
-            labels = torch.LongTensor(np.asarray(labels).reshape(1, self.max_length))
-            yield dict(input_ids=input_ids, labels=labels)
+            if len(g_input_ids) + len(input_ids) < max_length:
+                g_input_ids.extend(input_ids)
+                g_labels_ids.extend(labels)
+            else:
+                g_input_ids = g_input_ids[:max_length] * (max_length - len(g_input_ids)) * padding_token
+                g_labels_ids = g_labels_ids[:max_length] * (max_length - len(g_labels_ids)) * padding_token
+                a1 = torch.LongTensor(np.asarray(g_input_ids).reshape(self.micro_batch_size, self.max_length))
+                a2 = torch.LongTensor(np.asarray(g_labels_ids).reshape(self.micro_batch_size, self.max_length))
+                yield dict(input_ids=a1, labels=a2)
+                g_input_ids = input_ids
+                g_labels_ids = labels
+        if len(g_input_ids) > 0:
+            g_input_ids = g_input_ids[:max_length] * (max_length - len(g_input_ids)) * padding_token
+            g_labels_ids = g_labels_ids[:max_length] * (max_length - len(g_labels_ids)) * padding_token
+            a1 = torch.LongTensor(np.asarray(g_input_ids).reshape(self.micro_batch_size, self.max_length))
+            a2 = torch.LongTensor(np.asarray(g_labels_ids)).reshape(self.micro_batch_size, self.max_length)
+            yield dict(input_ids=a1, labels=a2)
 
     def __len__(self):
         # 只训练前xx条数据
@@ -76,7 +98,7 @@ class DataEngine():
 if __name__ == '__main__':
     chat = [
         {
-            "content":"你好"
+            "content": "你好"
         },
         {
             "content": "11"
