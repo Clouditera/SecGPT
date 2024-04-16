@@ -50,6 +50,7 @@ class DataEngine():
         self.tokenizer = tokenizer
         self.index = checkpoint_step
         self.data = []
+        self.data2 = []
         stop_token = "<|end_of_turn|>"
         self.stop_token_ids = tokenizer.encode(stop_token, add_special_tokens=False)
 
@@ -62,8 +63,10 @@ class DataEngine():
                 "input_ids": input_ids,
                 "labels": labels,
             })
+        for item in self.get_data2():
+            self.data2.append(item)
 
-    def get_data(self):
+    def get_data2(self):
         max_length = self.max_length * self.micro_batch_size
         g_input_ids = []
         g_labels_ids = []
@@ -90,9 +93,13 @@ class DataEngine():
             a2 = torch.LongTensor(np.asarray(g_labels_ids).reshape(self.micro_batch_size, self.max_length))
             yield dict(input_ids=a1, labels=a2)
 
+    def get_data(self):
+        for item in self.data2:
+            yield item
+
     def __len__(self):
         # 只训练前xx条数据
-        return len(self.data)
+        return len(self.data2)
 
 
 if __name__ == '__main__':
@@ -115,3 +122,4 @@ if __name__ == '__main__':
     engine = DataEngine(tokenizer, 1, 8192, 0, "D:\数据集\data-index\jibei-清洗\sft-ai\cc.json")
     for item in engine.get_data():
         print(item)
+    print(engine.__len__())
