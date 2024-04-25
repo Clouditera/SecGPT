@@ -105,7 +105,7 @@ def main(
             return
         prompt = reformat_sft(instruction, "")
 
-        inputs = tokenizer(prompt, return_tensors="pt")
+        inputs = tokenizer(prompt, return_tensors="pt").to(device)
         input_ids = inputs["input_ids"]
 
         if not (1 > temperature > 0):
