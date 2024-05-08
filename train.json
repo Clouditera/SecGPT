@@ -1,18 +1,18 @@
 {
-  "max_position_embeddings": 4096,
-  "batch_size": 1,
-  "accumulation_steps": 256,
-  "num_train_epochs": 1,
-  "learning_rate": 1e-05,
-  "save_steps": 1000,
-  "logging_steps": 100,
-  "pre_train_path": "",
-  "pre_tokenizer_path": "",
-  "dataset_path": "",
-  "train_option": "pretrain",
-  "output_dir": "",
-  "use_lora": false,
-  "pre_lora_train_path": "",
-  "lora_rank": 8,
-  "lora_alpha": 32
+  "max_position_embeddings": 4096, # 训练最大上下文长度
+  "batch_size": 1, # 训练批次
+  "accumulation_steps": 256, # 累积步数
+  "num_train_epochs": 1, # 训练轮次
+  "learning_rate": 1e-05, # 学习率
+  "save_steps": 1000, # 保存步数
+  "logging_steps": 100,  # 日志步数
+  "pre_train_path": "",  # 预训练模型路径
+  "pre_tokenizer_path": "", # 预训练模型tokenizer路径
+  "dataset_path": "", # 数据集路径，一般为json或jsonl格式
+  "train_option": "pretrain", # 训练方式 pretrain sft chatml mistral
+  "output_dir": "", # 输出路径
+  "use_lora": false, # 是否使用lora，false即全量微调
+  "pre_lora_train_path": "", # 继续训练时上一步lora保存的路径
+  "lora_rank": 8, # lora rank 越大训练参数越多
+  "lora_alpha": 32 # lora aplpha
 }
