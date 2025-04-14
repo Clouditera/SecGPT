@@ -28,9 +28,13 @@ SecGPT 融合了自然语言理解、代码生成、安全知识推理等核心�
 
 ## 📂 开源资源
 
-- **模型源码与文档：**https://github.com/Clouditera/secgpt
+- ##### 模型源码与文档：
+
+  -  https://github.com/Clouditera/secgpt
+
 - **模型下载地址：**
-  - HuggingFace: https://huggingface.co/clouditera/secgpt
+
+  - HuggingFace:  https://huggingface.co/clouditera/secgpt
   - ModelScope: [即将上线]
 
 - **数据集下载地址：**
