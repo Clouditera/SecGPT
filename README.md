@@ -35,7 +35,7 @@ SecGPT 融合了自然语言理解、代码生成、安全知识推理等核心�
 - **模型下载地址：**
 
   - HuggingFace:  https://huggingface.co/clouditera/secgpt
-  - ModelScope: [即将上线]
+  - ModelScope:  https://modelscope.cn/models/clouditera/SecGPT-14B
 
 - **数据集下载地址：**
   - https://huggingface.co/datasets/clouditera/security-paper-datasets
